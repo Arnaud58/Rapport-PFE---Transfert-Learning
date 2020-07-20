@@ -1,0 +1,253 @@
+\documentclass[11pt,oneside,noprintercorrection,latin1,utf8]{fst-lille}
+% Pour les tables
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+%----------------------------------------------------------------------
+%                     Chargement de quelques packages
+%----------------------------------------------------------------------
+
+% Si l'on veut produire une version PDF avec distiller ou pdflatex :
+%\usepackage{tlhypref}
+\usepackage[pdfborder=0 0 0]{fst-lille}
+
+% Pour les images :
+\usepackage{graphicx}
+% Si on veut des mini-tables des matieres (utiliser minitoc-hyper
+% en conjonction avec tlhypref) :
+%\usepackage[french]{minitoc}
+%\usepackage[french]{minitoc-hyper}
+
+\usepackage[frenchb]{babel}
+\usepackage{float}
+
+% Pour les codes
+\usepackage{listings}
+\lstset{language=python,basicstyle=\small}
+
+\synctex = 1
+
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{pifont}
+\usepackage{ulem}
+
+% Correction José
+\newcommand{\jose}[1]{\textcolor{red}{#1}}
+%-------------------------------------------------------------------
+%  Surcharge de commandes pour les variables et page d'en-téte
+%-------------------------------------------------------------------
+
+\makeatletter
+
+%
+% les deux commandes suivantes sont entre \makeatletter
+% et \makeatother parce qu'elles utilisent des `@'.
+%
+
+\renewcommand{\@DFD}{}
+
+
+\renewcommand{\@NancyIhe@d}{{\UseEntryFont{ThesisFirstPageHead}\noindent
+    \centerline{
+                    {\setbox0=\hbox{$\raise2.3cm\hbox{\FSTInfoLogo}$}%
+                     \ht0=\baselineskip\box0}\hfill
+                     }%
+    \@TL@cmn@head\\
+    \par
+    }%
+    }
+
+
+\newcommand\TheseLilleI{\renewcommand{\@ThesisFirstPageHead}{\@NancyIhe@d}%
+                         \ThesisDiploma{{\UseEntryFont{ThesisDiploma}%
+                              \\[3mm]
+            {\UseEntryFont{ThesisSpecialty}( )}}}}
+
+\makeatother
+
+%-------------------------------------------------------------------
+%           Corrections pour les imprimantes recto-verso
+%                          (A AJUSTER)
+%-------------------------------------------------------------------
+
+%\ShiftOddPagesRight{-1mm}
+%\ShiftOddPagesDown{2.5mm}
+%\ShiftEvenPagesRight{0mm}
+%\ShiftEvenPagesDown{0mm} 
+
+%-------------------------------------------------------------------
+%                Mise en page
+%-------------------------------------------------------------------
+
+%-------------------------------------------------------------------
+%                             interligne
+%-------------------------------------------------------------------
+\renewcommand{\baselinestretch}{1.3}
+
+%-------------------------------------------------------------------
+%                             Marges
+%-------------------------------------------------------------------
+
+% pour positionner les vraies marges:
+%\SetRealMargins{1mm}{1mm}
+
+%-------------------------------------------------------------------
+%                             En-tetes
+%-------------------------------------------------------------------
+%On n'utilise pas les logos
+%\DontShowLogos
+
+% Les en-tetes: quelques exemples
+%\UppercaseHeadings
+%\UnderlineHeadings
+%\newcommand\bfheadings[1]{{\bf #1}}
+%\FormatHeadingsWith{\bfheadings}
+%\FormatHeadingsWith{\uppercase}
+%\FormatHeadingsWith{\underline}
+\newcommand\upun[1]{\uppercase{\underline{\underline{#1}}}}
+\FormatHeadingsWith\upun
+
+\newcommand\itheadings[1]{\textit{#1}}
+\FormatHeadingsWith{\itheadings}
+
+% pour avoir un trait sous l'en-tete:
+\setlength{\HeadRuleWidth}{0.4pt}
+
+%-------------------------------------------------------------------
+%                Chemin d'inclusion des graphiques
+%-------------------------------------------------------------------
+
+\graphicspath{{img/}{./}}
+
+%-------------------------------------------------------------------
+%                         Les references
+%-------------------------------------------------------------------
+
+\NoChapterNumberInRef \NoChapterPrefix
+
+%-------------------------------------------------------------------
+%                           Brouillons
+%-------------------------------------------------------------------
+
+% ceci ajoute une marque `brouillon' et la date
+%\ThesisDraft
+
+
+
+\begin{document}
+\renewcommand{\labelitemi}{$\bullet$}
+\renewcommand{\labelitemii}{$\circ$}
+%-------------------------------------------------------------------
+%                          Encadrements
+%-------------------------------------------------------------------
+
+% encadre les chapitres dans la table des matieres:
+% (ces commandes doivent figurer apres \begin{document}
+
+%\FrameChaptersInToc
+%\FramePartsInToc
+
+
+%-------------------------------------------------------------------
+%            Reinitialisation de la numerotation des chapitres
+%-------------------------------------------------------------------
+
+% Si la commande suivante est presente,
+% elle doit figurer APRES \begin{document}
+% et avant la premiere commande \part
+\ResetChaptersAtParts
+
+%-------------------------------------------------------------------
+%               mini-tables des matieres par chapitre
+%-------------------------------------------------------------------
+
+% preparer les mini-tables des matieres par chapitre.
+% (commande de minitoc.sty)
+%\dominitoc
+
+%-------------------------------------------------------------------
+%                         Page de titre:
+%-------------------------------------------------------------------
+
+
+\ThesisKind{Rapport de projet}
+\ThesisPresentedThe{soutenu le 11/12/2019}
+\ThesisTitle{Transfer learning et Few-Shot learning pour la détection d'objets}
+\ThesisAuthor{BARCHID Sami et ROUGETET Arnaud}
+%\NomDuLaboOuEntreprise{Nom labo ou entreprise}
+%\LogoLaboOuEntreprise{alcove} % Image du logo du labo ou ets dans le rep img
+
+\NomDuLaboOuEntreprise{Équipe FOX - CRIStAL}
+\LogoLaboOuEntreprise{thumb_logo-FOX.png} % Image du logo du labo ou ets dans le rep img TODO
+
+\TheseLilleI
+
+\NewJuryCategory{encadrant}{\it Encadrant : MENNESSON José}
+                        {\it Encadrant : TIRILLY Pierre}
+
+%\encadrant = {Nom encadrant 1\\
+%              Nom encadrant 2}
+
+% Creation de la page de titre:
+\MakeThesisTitlePage
+
+%-------------------------------------------------------------------
+%                  ecriture de `Chapitre' et `Partie'
+%                      dans la table des matieres
+%-------------------------------------------------------------------
+
+\WritePartLabelInToc \WriteChapterLabelInToc
+
+% ABSTRACT %
+\input{abstract.tex}
+
+%-------------------------------------------------------------------
+%                        table des matieres
+%-------------------------------------------------------------------
+
+\tableofcontents
+
+%-------------------------------------------------------------------
+%              Exemple d'utilisation de \SpecialSection
+%-------------------------------------------------------------------
+
+% La commande \mainmatter (nouvelle commande LaTeX2e) permet de passer
+% a la numerotation arabe (ce que fait \pagenumbering{arabic})
+% et de faire commencer la nouvelle page 1 sur une page impaire.
+% On evitera donc d'utiliser directement \pagenumbering{arabic}.
+\mainmatter
+
+% ----------------------------------------------------------------
+
+% Introduction %
+\input{introduction.tex}
+
+%--------------------------------------------------------------------------------------
+%--------------------------------------------------------------------------------------
+
+% Deep learning en vision artificielle %
+\input{deep-learning.tex}
+
+% Travaux liés
+\input{related-works.tex}
+
+% Transfer learning %
+\input{transfer-learning.tex}
+
+% Few-shot object detection
+\input{FSOD.tex}
+
+% analyse %
+\input{analyse.tex}
+
+% Mise en pratique future
+\input{future-works.tex}
+
+% Conclusion %
+\input{conclusion.tex}
+
+\bibliographystyle{myunsrt}
+\small
+\bibliography{biblio}
+
+
+\end{document}

@@ -1,0 +1,115 @@
+\chapter{Analyse comparative}
+\label{chap:analyse}
+
+Le transfer learning et la FSOD sont deux approches qui diffèrent dans leur conception mais qui ont pour même objectif de répondre au besoin de faire face au manque d'images annotées pour l'entraînement d'un détecteur. Dans ce chapitre, nous analysons les résultats présentés par les articles des modèles de détection pour chacune des deux approches afin de tenter d'expliquer l'intérêt de chacune. Nous montrons aussi les limitations de nos analyses.
+
+% Méthodologie %
+\section{Informations recherchées}
+\label{sec:analyse-metodologie}
+
+%\subsection{Organisation de l'analyse}
+%Nous organisons notre analyse des résultats en deux phases :
+%\begin{enumerate}
+%    \item \textbf{Comparaison propre à l'approche :} pour chaque approche\footnote{C'est-à-dire, transfer learning ou few-shot object detection}, comparer les résultats des différents modèles que nous avons retenus dans notre recherche bibliographique.
+%    \item \textbf{Comparaison entre approches:} nous prenons les modèles les plus performants pour le transfer learning et la FSOD et nous comparons les résultats. Nous définissons ensuite les avantages et inconvénients des approches sur base des résultats trouvés.
+%\end{enumerate}
+
+%\subsection{Informations recherchées}
+%\label{subsec:info-recherchee}
+Les informations qui nous intéressent pour comparer les modèles constituant l'état de l'art des deux approches sont : 
+\begin{itemize}
+    \item La précision du détecteur.
+    \item La quantité d'images annotées requise pour obtenir cette détection, qui sert à mesurer l'importance du coût de l'étape d'acquisition d'images annotées.
+    \item Le/les dataset(s) utilisé(s) pour la méthode.
+    \item Le type de détecteur utilisé pour le modèle (1-stage ou 2-stage). Comme évoqué dans la section \ref{sec:class-vs-detect}, un détecteur de type 1-stage a tendance à être moins précis mais plus rapide qu'un détecteur de type 2-stage. Cette information est importante pour relativiser les résultats en terme de précision.
+\end{itemize}
+
+
+\section{Les solutions de transfer learning}
+\label{sec:analyse-transfer-learning}
+
+Comme nous le voyons dans le tableau \ref{tab:generic-table}, les méthodes les plus utilisées dans la littérature sont celles du Deep Learning transfer. C'est, en effet, la méthode qui obtient les meilleurs résultats et s'adapte le mieux à de nombreuses applications.
+
+Parmi les points de comparaison évoqués par le tableau \ref{tab:generic-table} se trouve le nombre d'images dont la base de destination et le score obtenue par le réseau. Le nombre d'image est au moins aussi important que le score car un bon score avec un grand nombre d'image n'est pas toujours pertinent vis à vis de notre objectif. 
+
+Un point important de comparaison qui fait aussi partie de notre tableau est le fait de pouvoir faire des taches de classification ou de régression avec le réseau. Ceci peut être fait avec le Deep Learning mais aussi avec le multi-tasking, ce qui le rend particulièrement intéressant pour les tâches que l'on veut faire. De plus le score obtenu n'est pas calculé de la même manière, celui de la régression est un score \textbf{mAP} et celui de la classification un \textbf{classification accuracy}.
+
+Ces scores peuvent se comparer dans le sens où ils donnent une idée de la fiabilité des résultats du réseau. Il ne reste cependant pas comparable de manière stricte car il ne s'agit pas de la même métrique, le \textbf{mAP} calcul la bonne position de Bounding Box et la \textbf{classification accuracy} le pourcentage de classification réussis.
+
+Ainsi on voit que même si les problèmes de régression ont un nombre d'images par base de données beaucoup plus élevés, le fait qu'ils soient capables de s'attaquer à ce problème spécifique leur permet d'être mis en avant. Malgré son score légèrement supérieur, le plus intéressant des modèles de régression est Mobile Netv2 pour son nombre d'images faibles par rapport à son score.
+
+En classification, il se démarque deux grands réseaux, le JAN et le ResNet50 qui a tous deux moins de 600 images. L'avantage du JAN est d'être un réseau entraîné sur des bases de données classiques (Office31 et ImageCLEF-DA) tandis que le Res Net50 est entraîné sur quelque chose de plus spécifique.
+
+Un biais important des scores est que les travaux sont très spécialisés dans leur domaine et choisissent des données qui mettent en valeur leurs travaux de manière sensible. Ainsi le ResNet50 est très efficace sur la base de 531 images ARCATIT, qui est une base de données d'image de sonar, mais ne sera sûrement pas aussi efficace sur une base représentant autre chose.
+
+\begin{table}[]
+\begin{tabular}{ccccc}
+\hline
+\textbf{Type}                                    & \textbf{Modèle} & \textbf{Dataset(s)} & \textbf{Score (\%)}&  \textbf{tâche}\\ \hline
+Deep TL avec adversial & JAN        &  600 images &  84\% & classification\\
+Multi-tasking      & Taskonomie     &  150000 img/tch - 26 tâches & 80\% & régression\\
+Deep Learning transfer  & MobileNetV2  & 10000 images &   78.29\%   & régression     \\
+Deep Learning transfer   & VGG-16 & 6900 images&  99.80\% & classification\\
+Deep Learning transfer  & ResNet50 & 531 images&  94\% & classification \\
+\end{tabular}
+\caption{Table de comparaison de modèle de transfer learning}
+\label{tab:generic-table}
+\end{table}
+
+
+\section{Les solutions de few-shot object detection}
+\label{sec:analyse-FSOD}
+Nous adaptons l'analyse des informations recherchées (mentionnées en section \ref{sec:analyse-metodologie}) au problème de la FSOD pour éviter de perdre de l'intérêt dans notre comparaison. En effet, des informations telle que la quantité d'images annotées requise ne suffisent pas à illustrer la nature d'une tâche $N$-way $K$-shot que tente de résoudre un détecteur en FSOD.
+
+Le tableau \ref{tab:FSOD-table} montre la compilation des observations faites par les articles de recherche sur leurs méthodes de FSOD. Ce sont, à notre connaissance, les seuls articles existants sur le sujet. Dans ce tableau, nous préservons la notion de tâche $N$-way $K$-shot qui nous renseigne implicitement sur le nombre $N \times K$ d'images annotées requises.
+
+Globalement, les résultats présentés sont encore loin de rivaliser avec l'état de l'art en détection d'objets générique, où les détecteurs peuvent atteindre des scores de précision (mAP) de 86.9\% sur Pascal VOC 2007 \cite{SNIPER}, par exemple. Au vu de ce qui a été dit en section \ref{sec:FSOD-verrous}, on sait que la FSOD en est encore à ses débuts. Néanmoins, nous pensons que les résultats sont prometteurs.
+
+
+% table FSOD
+\begin{table}[]
+\begin{tabular}{ccccc}
+\hline
+\textbf{Type}                                    & \textbf{Modèle}                         & \textbf{Dataset(s)}                       & \textbf{Tâche}                                                                                                 & \textbf{mAP (\%)}                                                                                           \\ \hline
+{\color[HTML]{333333} }                          & \cellcolor[HTML]{FFCCC9}Meta-RCNN \cite{anonymous2020metarcnn}    & \cellcolor[HTML]{FFCCC9}ImageNet-LOC      & \cellcolor[HTML]{FFCCC9}\begin{tabular}[c]{@{}c@{}}50-way 1-shot\\ 50-way 5-shot\end{tabular}                  & \cellcolor[HTML]{FFCCC9}{\color[HTML]{333333} \textbf{\begin{tabular}[c]{@{}c@{}}25.1\\ 40.3\end{tabular}}} \\
+{\color[HTML]{333333} }                          & \cellcolor[HTML]{FFCCC9}RepMet \cite{RepMet}          & \cellcolor[HTML]{FFCCC9}ImageNet-LOC      & \cellcolor[HTML]{FFCCC9}\begin{tabular}[c]{@{}c@{}}50-way 1-shot\\ 50-way 5-shot\\ 50-way 10-shot\end{tabular} & \cellcolor[HTML]{FFCCC9}\begin{tabular}[c]{@{}c@{}}24.1\\ 39.6\\ \textbf{49.2}\end{tabular}                          \\
+{\color[HTML]{333333} }                          & Attention-RPN \cite{attention-rpn}                           & FSOD dataset \cite{attention-rpn}                             & \begin{tabular}[c]{@{}c@{}}1-way 5-shot\\ 5-way 5-shot\end{tabular}                                            & \begin{tabular}[c]{@{}c@{}}69.8\\ 61.6\end{tabular}                                                         \\
+\multirow{-4}{*}{{\color[HTML]{333333} 2-stage}} & \cellcolor[HTML]{BDF0FF}Meta-RCNN \cite{Meta-RCNN-19}    & \cellcolor[HTML]{BDF0FF}VOC2007 \cite{Pascal-VOC}           & \cellcolor[HTML]{BDF0FF}\begin{tabular}[c]{@{}c@{}}5-way 1-shot\\ 5-way 5-shot\\ 5-way 10-shot\end{tabular}    & \cellcolor[HTML]{BDF0FF}\textbf{\begin{tabular}[c]{@{}c@{}}19.9\\ 45.7\\ 51.5\end{tabular}}                 \\ \hline
+                                                 & \cellcolor[HTML]{BDF0FF}Feat. Reweight. \cite{feature-reweighting} & \cellcolor[HTML]{BDF0FF}VOC2007 \cite{Pascal-VOC}           & \cellcolor[HTML]{BDF0FF}\begin{tabular}[c]{@{}c@{}}5-way 1-shot\\ 5-way 5-shot\\ 5-way 10-shot\end{tabular}    & \cellcolor[HTML]{BDF0FF}\begin{tabular}[c]{@{}c@{}}19.2\\ 40.6\\ 47.2\end{tabular}                          \\
+\multirow{-2}{*}{1-stage}                        & \cellcolor[HTML]{FFFFFF}Meta-SSD \cite{Meta-SSD}        & \cellcolor[HTML]{FFFFFF}VOC2007 \cite{Pascal-VOC} + VOC2012  & \cellcolor[HTML]{FFFFFF}\begin{tabular}[c]{@{}c@{}}5-way 1-shot\\ 5-way 5-shot\end{tabular}                    & \cellcolor[HTML]{FFFFFF}\begin{tabular}[c]{@{}c@{}}27.3\\ 27.8\end{tabular}                                
+\end{tabular}
+\caption{Tableau de présentation des modèles de few-shot object detection existants et de leurs résultats en mAP (\%) suivant la tâche sur laquelle ils ont été évalués. Les types de détecteur (1-stage ou 2-stage) sont distingués pour tenir compte de leurs différences (voir la section \ref{sec:class-vs-detect} pour les différences). Les tâches similaires sont regroupées en couleur, pour faciliter la lecture des résultats. les tâches similaires comparées sur ImageNet-LOC sont marquées en \colorbox[HTML]{FFCCC9}{ROUGE}. Les tâches similaires comparées sur VOC2007 \cite{Pascal-VOC} sont marquées en \colorbox[HTML]{BDF0FF}{BLEU}. Les meilleurs résultats en précision pour les tâches similaires sont mis en \textbf{gras}. À ne pas confondre, deux modèles possèdent le même nom dans ce tableau (Meta-RCNN) mais sont bien deux modèles différents.}
+\label{tab:FSOD-table}
+\end{table}
+
+
+
+
+\subsection*{Biais de comparaisons}
+Nous affirmons que le tableau \ref{tab:FSOD-table} est avant tout destiné à montrer une compilation de résultats dans le but de donner une idée au lecteur plutôt qu'une comparaison fiable. Nous définissons plusieurs biais qui empêchent de prendre ce tableau en tant que comparatif.
+
+Premièrement, une des raisons évidentes est la différence des tâches $N$-way $K$-shot présentées. Des tâches différentes reviennent à changer totalement le problème que le détecteur tente de résoudre, en plus de changer la quantité d'images annotées disponibles pour le détecteur. Et, comme la quantité de données annotées est très réduite en FSOD, une différence normalement négligeable d'une seule image devient tout de suite très importante.
+
+Deuxièmement, l'autre raison évidente est la différence de dataset utilisé pour certains détecteur. À l'instar d'une différence de tâches, la comparaison de deux résultats basés sur deux datasets différents reviendraient à comparer deux problèmes qui n'ont pas de rapport entre eux. En plus de cela, il faut ajouter le fait que les images présentes dans ces datasets peuvent varier en difficulté\footnote{Par exemple, une image présentant plusieurs objets recherchés dans un environnement encombrés d'objets non-pertinents est plus "difficile" qu'une image avec un seul objet recherché en avant plan sur un fond uni.}, ce qui peut influer sur les performances observées.
+
+Troisièmement, on voit que certains modèles se comparent sur base des mêmes tâches avec le/les même(s) dataset(s). La comparaison paraîtrait pertinente mais nous émettons quand même une réserve pour ce cas de figure. La plupart des tests rencontrés dans les articles sélectionnent les $N \times K$ images de la tâche au hasard dans un dataset de grande de taille. Dans une situation comme en FSOD où le nombre d'images annotées disponibles à l'entraînement est très réduit, la sélection aléatoire d'une image plus "compliquée" (arrière plan encombré d'objets non-pertinents, par exemple) que les autres peut avoir une influence non désirée sur le mAP. 
+
+Pour une comparaison réellement équitable, nous avançons qu'il est préférable de maintenir aussi les mêmes échantillons de tâches originaires du même dataset à travers tous les détecteurs.
+
+\section{Comparaison entre approches}
+\label{sec:analyse-comparaison}
+En se basant sur l'apparence générale des résultats obtenus pour le transfer learning (tableau \ref{tab:generic-table}) et pour la FSOD (tableau \ref{tab:FSOD-table}), on remarque que le transfer learning a tendance à être plus précis en terme de mAP mais à demander beaucoup plus d'images annotées.
+
+On émet l'hypothèse que les deux approches essayent de traiter un cas de manque de données annotées différent :
+\begin{itemize}
+    \item Pour le transfer learning, on dispose d'un nombre d'images annotées réduit mais toujours conséquent et on transfère la connaissance d'un modèle déjà entraîné au détecteur en transfer learning pour que celui-ci converge plus vite avec les données réduites.
+    
+    \item Pour la few-shot object detection, on recherche à exécuter une détection dans des cas de figure où on dispose d'un nombre d'images annotées extrêmement réduit (de 1 à 10 images). Pour ce faire, on construit un savoir antérieur à partir d'un entraînement sur des images provenant de datasets déjà existants, puis on adapte ce savoir antérieur à la tâche cible à données réduites.
+\end{itemize}
+
+On ne peut cependant pas, avec les tableaux de comparaison obtenus, montrer l'efficacité d'une méthode de manière pertinente puisqu'on ne compare pas les mêmes tâches. Dans le cas où on voudrait tout de même faire une comparaison des deux approches, il existe toujours le problème de définir une base de comparaison fiable sur lesquelles nous appuyer. En effet, à notre connaissance, il n'existe pas de méthodologie permettant de comparer les deux approches de manière équitable. Si nous nous basons sur une configuration comme pour la FSOD, celle-ci est avantagée par rapport au transfer learning et vice-versa. Il existe donc un besoin pour notre projet de définir une méthodologie de comparaison équitable entre le transfer learning et la few-shot object detection.
+
+
+\par\noindent\rule{\textwidth}{0.4pt}
+
+Notre analyse des résultats permet de dégager certaines tendances dans les détecteurs pour chaque approche. Nous montrons également les problèmes qu'il y a dans l'analyse des résultats des détecteurs pour le transfer learning ou la FSOD, ainsi que les défis à relever pour comparer les deux approches entre elles. Tout cela amène à la nécessité de produire, premièrement, des tests comparatifs montrant les performances des algorithmes spécifiques à une approche, et deuxièmement, de mettre au point une méthodologie la plus fiable possible pour comparer les approches entre elles.
